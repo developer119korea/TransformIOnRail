@@ -3,6 +3,7 @@
 public class Mover : MonoBehaviour
 {
     [SerializeField] private Rail rail = null;
+    [SerializeField] private PlayMode playMode = PlayMode.Linear;
 
     private int currentSeg = 0;
     private float transition = 0f;
@@ -29,7 +30,7 @@ public class Mover : MonoBehaviour
             currentSeg--;
         }
 
-        transform.position = rail.CatmullPosition(currentSeg, transition);
+        transform.position = rail.PositionOnRail(currentSeg, transition, playMode);
         transform.rotation = rail.Orientation(currentSeg, transition);
     }
 }

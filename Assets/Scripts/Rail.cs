@@ -1,6 +1,12 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
+public enum PlayMode
+{
+    Linear,
+    Catmull,
+}
+
 [ExecuteInEditMode]
 public class Rail : MonoBehaviour
 {
@@ -11,14 +17,34 @@ public class Rail : MonoBehaviour
         nodes = GetComponentsInChildren<Transform>();
     }
 
-    public Vector3 LinearPosition(int seg, float ratio)
+    public Quaternion Orientation(int seg, float ratio)
+    {
+        Quaternion q1 = nodes[seg].rotation;
+        Quaternion q2 = nodes[seg + 1].rotation;
+        return Quaternion.Lerp(q1, q2, ratio);
+    }
+
+
+    public Vector3 PositionOnRail(int seg, float ratio, PlayMode mode)
+    {
+        switch (mode)
+        {
+            default:
+            case PlayMode.Linear:
+                return LinearPosition(seg, ratio);
+            case PlayMode.Catmull:
+                return CatmullPosition(seg, ratio);
+        }
+    }
+
+    private Vector3 LinearPosition(int seg, float ratio)
     {
         Vector3 p1 = nodes[seg].position;
         Vector3 p2 = nodes[seg + 1].position;
         return Vector3.Lerp(p1, p2, ratio);
     }
 
-    public Vector3 CatmullPosition(int seg, float ratio)
+    private Vector3 CatmullPosition(int seg, float ratio)
     {
         Vector3 p1, p2, p3, p4;
 
@@ -31,7 +57,7 @@ public class Rail : MonoBehaviour
         }
         else if (seg == nodes.Length - 2)
         {
-            p1 = nodes[seg -1].position;
+            p1 = nodes[seg - 1].position;
             p2 = nodes[seg].position;
             p3 = nodes[seg + 1].position;
             p4 = p3;
@@ -66,13 +92,6 @@ public class Rail : MonoBehaviour
             (-p1.z + 3.0f * p2.z - 3.0f * p3.z + p4.z) * t3);
 
         return new Vector3(x, y, z);
-    }
-
-    public Quaternion Orientation(int seg, float ratio)
-    {
-        Quaternion q1 = nodes[seg].rotation;
-        Quaternion q2 = nodes[seg + 1].rotation;
-        return Quaternion.Lerp(q1, q2, ratio);
     }
 
     private void OnDrawGizmos()
