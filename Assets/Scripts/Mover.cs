@@ -2,11 +2,11 @@
 
 public class Mover : MonoBehaviour
 {
-    [SerializeField] private Rail rail;
+    [SerializeField] private Rail rail = null;
 
-    private int currentSeg;
-    private float transition;
-    private bool isCompleted;
+    private int currentSeg = 0;
+    private float transition = 0f;
+    private bool isCompleted = false;
 
     private void Update()
     {
@@ -29,7 +29,7 @@ public class Mover : MonoBehaviour
             currentSeg--;
         }
 
-        transform.position = rail.LinearPosition(currentSeg, transition);
+        transform.position = rail.CatmullPosition(currentSeg, transition);
         transform.rotation = rail.Orientation(currentSeg, transition);
     }
 }
