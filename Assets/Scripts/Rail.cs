@@ -10,7 +10,7 @@ public enum PlayMode
 [ExecuteInEditMode]
 public class Rail : MonoBehaviour
 {
-    private Transform[] nodes = null;
+    public Transform[] nodes = null;
 
     private void Start()
     {
